@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ตรวจสอบใบเสนอราคา</title>
+  <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+  <style>
+    body { font-family: sans-serif; text-align: center; padding: 30px; }
+    input { padding: 10px; width: 80%; font-size: 18px; margin: 10px 0; }
+    button { padding: 10px 20px; font-size: 18px; background: #06C755; color: white; border: none; border-radius: 5px; }
+    .logo {
+      width: 150px;
+      height: auto;
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+  <!-- ✅ โลโก้ PEA -->
+  <img class="logo" src="https://img2.pic.in.th/pic/15936660_1523306937698774_8325876277849390923_o.jpg" alt="PEA Logo" border="0"/>
+ 
+  <h2>ใบเสนอราคาบำรุงรักษาหม้อแปลงลูกค้า ในพื้นที่ กฟภ.กันทรวิชัย</h2>
+  <h3>กรุณากรอกหมายเลขผู้ใช้ไฟ 11 หลัก เช่น 20019999444 สามารถดูได้จากบิลค่าไฟ </h3>
+  <h4>(หมายเหตุ ไม่ต้องใส่เลข 0 หน้าเลข 2 ตัวแรก) </h4>
+  <input type="text" id="meterId" placeholder="ใส่หมายเลขผู้ใช้ไฟ 11 หลัก" maxlength="11" />
+  <br>
+  <button onclick="submit()">กดตรงนี้เพื่อรับใบเสนอราคา</button>
+
+  <script>
+    async function submit() {
+      const meterId = document.getElementById('meterId').value.trim();
+       alert("CLICKED");  // 👈 ทดสอบว่าเรียกฟังก์ชันได้ไหม
+      
+      if (!/^\d{11}$/.test(meterId)) {
+        alert('กรุณาใส่หมายเลขผู้ใช้ไฟ 11 หลัก');
+        return;
+      }
+
+      await liff.init({ liffId: "2007700241-VxL0MwoK" });
+
+      const profile = await liff.getProfile();
+      const userId = profile.userId;
+
+      // ส่งข้อมูลไป Apps Script
+      fetch("https://script.google.com/macros/s/AKfycbyyxkHkHpmeja3UHJVCcSO8C0BxzUSGa409RPEfBtEcZgf7V85nODdXEljX1jvTyNtqhg/exec", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId: userId,
+          meterId: meterId
+        })
+      }).then(res => {
+        alert('ระบบกำลังตรวจสอบและจะส่งใบเสนอราคาผ่าน LINE ให้คุณในไม่ช้า');
+        liff.closeWindow(); // ปิด LIFF Page
+      });
+    }
+  </script>
+</body>
+</html>
